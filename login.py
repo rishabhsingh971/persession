@@ -9,10 +9,25 @@ from urllib.parse import urlparse
 
 import requests
 
-logging.config.fileConfig('logging.conf')
+# create logger with module name
+L = logging.getLogger(__name__)
+L.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+FILE_HANDLER = logging.handlers.RotatingFileHandler(
+    'session_login.log', maxBytes=512000, backupCount=5)
+FILE_HANDLER.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+CONSOLE_HANDLER = logging.StreamHandler()
+CONSOLE_HANDLER.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+FORMATTER = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+FILE_HANDLER.setFormatter(FORMATTER)
+CONSOLE_HANDLER.setFormatter(FORMATTER)
+# add the handlers to the logger
+L.addHandler(FILE_HANDLER)
+L.addHandler(CONSOLE_HANDLER)
 
-# create logger
-L = logging.getLogger('login')
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
 DEFAULT_SESSION_TIMEOUT = 60 * 60
@@ -96,7 +111,7 @@ class Login:
         self.user_agent = user_agent
         self.login_test_string = login_info.test_string
         if debug:
-            L.setLevel(logging.DEBUG)
+            CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.before_login = before_login
         self.__is_logged_in = False
         self.session: requests.Session = None
