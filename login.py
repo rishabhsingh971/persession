@@ -22,7 +22,7 @@ class LoginInfo:
     """ Login Info """
 
     def __init__(self, url: str, data: dict, test_url: str, test_string: str):
-        """initializer
+        """Initializer
 
         Arguments:
             url {str} -- login url
@@ -62,7 +62,7 @@ class Login:
             force_login: bool = False,
             **kwargs
     ):
-        """initializer
+        """Initializer
 
         Arguments:
             login_info {LoginInfo} -- login info
@@ -97,6 +97,7 @@ class Login:
             L.setLevel(logging.DEBUG)
         self.before_login = before_login
         self.__is_logged_in = False
+        self.session: requests.Session = None
         self.login(force_login, **kwargs)
 
     def login(self, force_login: bool = False, **kwargs):
@@ -136,22 +137,37 @@ class Login:
         self.cache_session()
 
     def cache_session(self):
-        """save session to a cache file."""
+        """Save session to a cache file."""
         # always save (to update timeout)
         L.debug('Update session cache file')
         with open(self.session_cache_path, "wb") as file:
             pickle.dump(self.session, file)
 
-    def get(self, url: str, **kwargs):
-        """get request"""
+    def get(self, url: str, **kwargs) -> requests.Response:
+        """Get request
+
+        Arguments:
+            url {str} -- url
+
+        Returns:
+            requests.Response -- request response
+        """
         L.debug('Get request %s', url)
         res = self.session.get(url, proxies=self.proxies, **kwargs)
         # the session has been updated on the server, so also update in cache
         self.cache_session()
         return res
 
-    def post(self, url: str, data: dict, **kwargs):
-        """post request"""
+    def post(self, url: str, data: dict, **kwargs) -> requests.Response:
+        """Post request
+
+        Arguments:
+            url {str} -- url
+            data {dict} -- data
+
+        Returns:
+            requests.Response -- request response
+        """
         L.debug('Post request %s', url)
         res = self.session.post(
             url, data=data, proxies=self.proxies, **kwargs)
@@ -160,7 +176,7 @@ class Login:
         return res
 
     def _test_login(self):
-        """test login
+        """Test login
 
         Raises:
             Exception: Login test failed
