@@ -18,6 +18,32 @@ DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/201
 DEFAULT_SESSION_TIMEOUT = 60 * 60
 
 
+class LoginInfo:
+    """ Login Info """
+
+    def __init__(self, url, data, test_url, test_string):
+        """initializer
+
+        Arguments:
+            url {str} -- login url
+            data {dict} -- login data or payload
+            test_url {str} -- login test url
+            test_string {str} -- string that would be checked in get response of give test url
+        """
+        self.url = url
+        self.data = data
+        self.test_url = test_url
+        self.test_string = test_string
+
+    def update_data(self, data):
+        """update login data
+
+        Arguments:
+            data {dict} -- [description]
+        """
+        self.data.update(data)
+
+
 class Login:
     """A class which handles and saves login sessions with proxy support. Basic Usage:
         >>> login_data = {'user': 'user', 'password': 'pass'}
@@ -27,10 +53,7 @@ class Login:
 
     def __init__(
             self,
-            login_url,
-            login_data,
-            login_test_url,
-            login_test_string,
+            login_info,
             before_login=None,
             max_session_time=DEFAULT_SESSION_TIMEOUT,
             proxies=None,
@@ -42,10 +65,7 @@ class Login:
         """initializer
 
         Arguments:
-            login_url {str} -- login url
-            login_data {dict} -- login payload
-            login_test_url {str} -- login test url
-            login_test_string {str} -- string that would be checked in get response of give test url
+            login_info {LoginInfo} -- login info
 
         Keyword Arguments:
             before_login {callback} -- function to call before login, with session and login data as arguments (default: {None})
@@ -61,18 +81,18 @@ class Login:
         Returns:
             Login -- Login class instance
         """
-        url_data = urlparse(login_url)
+        url_data = urlparse(login_info.url)
 
-        self.login_data = login_data
-        self.login_url = login_url
-        self.login_test_url = login_test_url
+        self.login_data = login_info.data
+        self.login_url = login_info.url
+        self.login_test_url = login_info.test_url
         self.proxies = proxies
         self.max_session_time = max_session_time
         self.session_cache_path = os.path.join(
             tempfile.gettempdir(), url_data.netloc + '.dat')
         L.debug('Set session cache file path - %s', self.session_cache_path)
         self.user_agent = user_agent
-        self.login_test_string = login_test_string
+        self.login_test_string = login_info.test_string
         if debug:
             L.setLevel(logging.DEBUG)
         self.before_login = before_login
@@ -150,7 +170,7 @@ class Login:
         L.debug('Test login')
         res = self.session.get(self.login_test_url)
         if res.text.lower().find(self.login_test_string.lower()) < 0:
-            raise Exception('Login test failed: url - "{}", string - "{}"'.format(
+            raise Exception('Login test failed: url - "{}",string - "{}"'.format(
                 self.login_test_url, self.login_test_string))
         self.__is_logged_in = True
         L.debug('Login test pass')

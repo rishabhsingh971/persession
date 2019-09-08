@@ -2,7 +2,7 @@
 import re
 from getpass import getpass
 
-from login import Login
+from login import Login, LoginInfo
 
 
 def set_auth_data(session, url, data):
@@ -34,7 +34,8 @@ def main():
         'utf8': '&#x2713;',
         'commit': 'Log in',
     }
-    Login(login_url, login_data, practice_url, 'Log Out', debug=True,
+    info = LoginInfo(login_url, login_data, practice_url, 'Log Out')
+    Login(info, debug=True,
           before_login=lambda session, login_data: set_auth_data(session, login_url, login_data))
 
 
