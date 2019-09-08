@@ -70,7 +70,8 @@ class Login:
         self.login_test_url = login_test_url
         self.proxies = proxies
         self.max_session_time = max_session_time_seconds
-        self.session_cache_path = tempfile.gettempdir() + url_data.netloc + '.dat'
+        self.session_cache_path = os.path.join(
+            tempfile.gettempdir(), url_data.netloc + '.dat')
         self.user_agent = user_agent
         self.login_test_string = login_test_string
         if debug:
