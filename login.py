@@ -19,8 +19,7 @@ DEFAULT_SESSION_TIMEOUT = 60 * 60
 
 
 class Login:
-    """
-    A class which handles and saves login sessions with proxy support. Basic Usage:
+    """A class which handles and saves login sessions with proxy support. Basic Usage:
         >>> login_data = {'user': 'user', 'password': 'pass'}
         >>> site = Login('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
         >>> res = site.get('https://e.com/data')
@@ -40,14 +39,13 @@ class Login:
             force_login=False,
             **kwargs
     ):
-        """
-        constructor
+        """initializer
 
         Arguments:
             login_url {str} -- login url
             login_data {dict} -- login payload
             login_test_url {str} -- login test url
-            login_test_string {str} -- login test string that would be checked on login test url given
+            login_test_string {str} -- string that would be checked in get response of give test url
 
         Keyword Arguments:
             before_login {callback} -- function to call before login, with session and login data as arguments (default: {None})
@@ -61,7 +59,7 @@ class Login:
             Exception: Login test failed
 
         Returns:
-            Login -- Login class object
+            Login -- Login class instance
         """
         url_data = urlparse(login_url)
 
@@ -82,8 +80,7 @@ class Login:
         self.login(force_login, **kwargs)
 
     def login(self, force_login=False, **kwargs):
-        """
-        Login to the session. tries to read last saved session from cache file,
+        """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
         Always updates session cache file.
         """
@@ -119,14 +116,14 @@ class Login:
         self.cache_session()
 
     def cache_session(self):
-        """ save session to a cache file. """
+        """save session to a cache file."""
         # always save (to update timeout)
         L.debug('Update session cache file')
         with open(self.session_cache_path, "wb") as file:
             pickle.dump(self.session, file)
 
     def get(self, url, **kwargs):
-        """ get request """
+        """get request"""
         L.debug('Get request %s', url)
         res = self.session.get(url, proxies=self.proxies, **kwargs)
         # the session has been updated on the server, so also update in cache
@@ -134,7 +131,7 @@ class Login:
         return res
 
     def post(self, url, data, **kwargs):
-        """ post request """
+        """post request"""
         L.debug('Post request %s', url)
         res = self.session.post(
             url, data=data, proxies=self.proxies, **kwargs)
@@ -143,8 +140,7 @@ class Login:
         return res
 
     def _test_login(self):
-        """
-        test login
+        """test login
 
         Raises:
             Exception: Login test failed
@@ -160,8 +156,7 @@ class Login:
         L.debug('Login test pass')
 
     def is_logged_in(self):
-        """
-        return if logged in (works only if test url and string is given)
+        """return if logged in (works only if test url and string is given)
 
         Returns:
             bool -- log in status
