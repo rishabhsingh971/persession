@@ -112,12 +112,13 @@ class Login:
             self.session.post(self.login_url, data=self.login_data,
                               proxies=self.proxies, **kwargs)
 
-        L.debug('Test login')
-        res = self.session.get(self.login_test_url)
-        if res.text.lower().find(self.login_test_string.lower()) < 0:
-            raise Exception('Login test failed: url - "{}", string - "{}"'.format(
-                self.login_test_url, self.login_test_string))
-        L.debug('Login test pass')
+        if self.login_test_url and self.login_test_string:
+            L.debug('Test login')
+            res = self.session.get(self.login_test_url)
+            if res.text.lower().find(self.login_test_string.lower()) < 0:
+                raise Exception('Login test failed: url - "{}", string - "{}"'.format(
+                    self.login_test_url, self.login_test_string))
+            L.debug('Login test pass')
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
 
