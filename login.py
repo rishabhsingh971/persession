@@ -72,7 +72,7 @@ class Login:
         self.login_test_url = login_test_url
         self.proxies = proxies
         self.max_session_time = max_session_time_seconds
-        self.session_file = tempfile.gettempdir() + url_data.netloc + '.dat'
+        self.session_cache_path = tempfile.gettempdir() + url_data.netloc + '.dat'
         self.user_agent = user_agent
         self.login_test_string = login_test_string
         if debug:
@@ -88,15 +88,16 @@ class Login:
         """
         is_cached = False
         L.debug('Ignore cache(force login)' if force_login else 'Check session cache')
-        if os.path.exists(self.session_file) and not force_login:
-            time = datetime.fromtimestamp(os.path.getmtime(self.session_file))
+        if os.path.exists(self.session_cache_path) and not force_login:
+            time = datetime.fromtimestamp(
+                os.path.getmtime(self.session_cache_path))
             # only load if last access time of file is less than max session time
             last_modified_time = (datetime.now() - time).seconds
             L.debug('Cache file found (last accessed %ss ago)',
                     last_modified_time)
 
             if last_modified_time < self.max_session_time:
-                with open(self.session_file, "rb") as file:
+                with open(self.session_cache_path, "rb") as file:
                     self.session = pickle.load(file)
                 is_cached = True
             else:
@@ -124,8 +125,8 @@ class Login:
     def cache_session(self):
         """ save session to a cache file. """
         # always save (to update timeout)
-        L.debug('Update session cache "%s"', self.session_file)
-        with open(self.session_file, "wb") as file:
+        L.debug('Update session cache "%s"', self.session_cache_path)
+        with open(self.session_cache_path, "wb") as file:
             pickle.dump(self.session, file)
 
     def get(self, url, **kwargs):
