@@ -21,7 +21,7 @@ DEFAULT_SESSION_TIMEOUT = 60 * 60
 class LoginInfo:
     """ Login Info """
 
-    def __init__(self, url, data, test_url, test_string):
+    def __init__(self, url: str, data: dict, test_url: str, test_string: str):
         """initializer
 
         Arguments:
@@ -35,7 +35,7 @@ class LoginInfo:
         self.test_url = test_url
         self.test_string = test_string
 
-    def update_data(self, data):
+    def update_data(self, data: dict):
         """update login data
 
         Arguments:
@@ -53,13 +53,13 @@ class Login:
 
     def __init__(
             self,
-            login_info,
+            login_info: LoginInfo,
             before_login=None,
-            max_session_time=DEFAULT_SESSION_TIMEOUT,
-            proxies=None,
-            user_agent=DEFAULT_USER_AGENT,
-            debug=True,
-            force_login=False,
+            max_session_time: int = DEFAULT_SESSION_TIMEOUT,
+            proxies: dict = None,
+            user_agent: str = DEFAULT_USER_AGENT,
+            debug: bool = True,
+            force_login: bool = False,
             **kwargs
     ):
         """initializer
@@ -99,7 +99,7 @@ class Login:
         self.__is_logged_in = False
         self.login(force_login, **kwargs)
 
-    def login(self, force_login=False, **kwargs):
+    def login(self, force_login: bool = False, **kwargs):
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
         Always updates session cache file.
@@ -142,7 +142,7 @@ class Login:
         with open(self.session_cache_path, "wb") as file:
             pickle.dump(self.session, file)
 
-    def get(self, url, **kwargs):
+    def get(self, url: str, **kwargs):
         """get request"""
         L.debug('Get request %s', url)
         res = self.session.get(url, proxies=self.proxies, **kwargs)
@@ -150,7 +150,7 @@ class Login:
         self.cache_session()
         return res
 
-    def post(self, url, data, **kwargs):
+    def post(self, url: str, data: dict, **kwargs):
         """post request"""
         L.debug('Post request %s', url)
         res = self.session.post(
