@@ -77,6 +77,7 @@ class Login:
         if debug:
             L.setLevel(logging.DEBUG)
         self.before_login = before_login
+        self.__is_logged_in = False
         self.login(force_login, **kwargs)
 
     def login(self, force_login=False, **kwargs):
@@ -119,6 +120,7 @@ class Login:
                 raise Exception('Login test failed: url - "{}", string - "{}"'.format(
                     self.login_test_url, self.login_test_string))
             L.debug('Login test pass')
+        self.__is_logged_in = True
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
 
@@ -145,3 +147,12 @@ class Login:
         # the session has been updated on the server, so also update in cache
         self.cache_session()
         return res
+
+    def is_logged_in(self):
+        """
+        check if logged in
+
+        Returns:
+            bool -- log in status
+        """
+        return self.__is_logged_in
