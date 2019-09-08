@@ -58,7 +58,7 @@ class Login:
             force_login {bool} -- bypass session cache and relogin (default: {False})
 
         Raises:
-            Exception: Unable to login
+            Exception: Login test failed
 
         Returns:
             Login -- Login class object
