@@ -14,7 +14,7 @@ L = logging.getLogger(__name__)
 L.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
 FILE_HANDLER = logging.handlers.RotatingFileHandler(
-    'session_login.log', maxBytes=512000, backupCount=5)
+    os.path.join(tempfile.gettempdir(), 'session_login.log'), maxBytes=512000, backupCount=5)
 FILE_HANDLER.setLevel(logging.DEBUG)
 # create console handler with a higher log level
 CONSOLE_HANDLER = logging.StreamHandler()
