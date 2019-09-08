@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
+DEFAULT_SESSION_TIMEOUT = 60 * 60
 
 
 class Login:
@@ -26,7 +27,7 @@ class Login:
             login_test_url,
             login_test_string,
             before_login=None,
-            max_session_time_seconds=3000 * 60,
+            max_session_time_seconds=DEFAULT_SESSION_TIMEOUT,
             proxies=None,
             user_agent=DEFAULT_USER_AGENT,
             debug=True,
