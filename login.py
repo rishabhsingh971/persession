@@ -72,6 +72,7 @@ class Login:
         self.max_session_time = max_session_time_seconds
         self.session_cache_path = os.path.join(
             tempfile.gettempdir(), url_data.netloc + '.dat')
+        L.debug('Set session cache file path - %s', self.session_cache_path)
         self.user_agent = user_agent
         self.login_test_string = login_test_string
         if debug:
@@ -120,7 +121,7 @@ class Login:
     def cache_session(self):
         """ save session to a cache file. """
         # always save (to update timeout)
-        L.debug('Update session cache "%s"', self.session_cache_path)
+        L.debug('Update session cache file')
         with open(self.session_cache_path, "wb") as file:
             pickle.dump(self.session, file)
 
