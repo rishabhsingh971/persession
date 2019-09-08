@@ -86,7 +86,8 @@ class Login:
             before_login {callback} -- function to call before login,
                 with session and login data as arguments (default: {None})
             max_session_time {int} -- session timeout in seconds (default: {3600})
-            proxies {dict} -- proxies in format {'https' : 'https://user:pass@server:port', 'http' : ...
+            proxies {dict} -- proxies in format {'https': 'https://user:pass@server:port',
+                'http' : ...
             user_agent {str} -- user agent (default:
                 {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'})
             debug {bool} -- verbose log messages (default: {True})
