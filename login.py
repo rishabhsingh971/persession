@@ -116,7 +116,8 @@ class Login:
         if res.text.lower().find(self.login_test_string.lower()) < 0:
             raise Exception('Login test failed: url - "{}", string - "{}"'.format(
                 self.login_test_url, self.login_test_string))
-        L.debug('cached session restored' if is_cached else 'login successfull')
+        L.debug('Login test pass')
+        L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
 
     def cache_session(self):
@@ -124,11 +125,11 @@ class Login:
         # always save (to update timeout)
         with open(self.session_file, "wb") as file:
             pickle.dump(self.session, file)
-            L.debug('updated session cache %s', self.session_file)
+            L.debug('updated session cache "%s"', self.session_file)
 
     def get(self, url, **kwargs):
         """ get request """
-        L.debug('get request %s', url)
+        L.debug('Get request %s', url)
         res = self.session.get(url, proxies=self.proxies, **kwargs)
         # the session has been updated on the server, so also update in cache
         self.cache_session()
@@ -136,7 +137,7 @@ class Login:
 
     def post(self, url, data, **kwargs):
         """ post request """
-        L.debug('post request %s', url)
+        L.debug('Post request %s', url)
         res = self.session.post(
             url, data=data, proxies=self.proxies, **kwargs)
         self.cache_session()
