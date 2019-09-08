@@ -123,9 +123,9 @@ class Login:
     def cache_session(self):
         """ save session to a cache file. """
         # always save (to update timeout)
+        L.debug('Update session cache "%s"', self.session_file)
         with open(self.session_file, "wb") as file:
             pickle.dump(self.session, file)
-            L.debug('updated session cache "%s"', self.session_file)
 
     def get(self, url, **kwargs):
         """ get request """
@@ -140,5 +140,6 @@ class Login:
         L.debug('Post request %s', url)
         res = self.session.post(
             url, data=data, proxies=self.proxies, **kwargs)
+        # the session has been updated on the server, so also update in cache
         self.cache_session()
         return res
