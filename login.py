@@ -21,11 +21,9 @@ DEFAULT_SESSION_TIMEOUT = 60 * 60
 class Login:
     """
     A class which handles and saves login sessions with proxy support. Basic Usage:
-    >>> base_url = 'https://example.com/'
-    >>> login_url = base_url + 'log_in'
-    >>> login_data = {'user': 'user', 'password': 'pass'}
-    >>> site = Login(slogin_url, login_data, base_url + 'user_page', 'log out')
-    >>> res = site.get(base_url + 'data')
+        >>> login_data = {'user': 'user', 'password': 'pass'}
+        >>> site = Login('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
+        >>> res = site.get('https://e.com/data')
     """
 
     def __init__(
