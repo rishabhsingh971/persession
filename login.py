@@ -34,6 +34,29 @@ class Login:
             force_login=False,
             **kwargs
     ):
+        """
+        constructor
+
+        Arguments:
+            login_url {str} -- login url
+            login_data {dict} -- login payload
+            login_test_url {str} -- login test url
+            login_test_string {str} -- login test string that would be checked on login test url given
+
+        Keyword Arguments:
+            before_login {callback} -- function to call before login, with session and login data as arguments (default: {None})
+            max_session_time {int} -- session timeout in seconds (default: {3000*60})
+            proxies {dict} -- proxies in format {'https' : 'https://user:pass@server:port', 'http' : ...
+            user_agent {str} -- user agent (default: {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'})
+            debug {bool} -- verbose log messages (default: {True})
+            force_login {bool} -- bypass session cache and relogin (default: {False})
+
+        Raises:
+            Exception: Unable to login
+
+        Returns:
+            Login -- Login class object
+        """
         url_data = urlparse(login_url)
 
         self.login_data = login_data
@@ -49,6 +72,11 @@ class Login:
         self.login(force_login, **kwargs)
 
     def login(self, force_login=False, **kwargs):
+        """
+        Login to the session. tries to read last saved session from cache file,
+        If this fails or last cache access was too old do proper login.
+        Always updates session cache file.
+        """
         is_cached = False
         if self.debug:
             print('loading or generating session...')
@@ -85,6 +113,7 @@ class Login:
         self.cache_session()
 
     def cache_session(self):
+        """ save session to a cache file. """
         # always save (to update timeout)
         with open(self.session_file, "wb") as f:
             pickle.dump(self.session, f)
@@ -92,12 +121,14 @@ class Login:
                 print('updated session cache-file {}'.format(self.session_file))
 
     def get(self, url, **kwargs):
+        """ get request """
         res = self.session.get(url, proxies=self.proxies, **kwargs)
         # the session has been updated on the server, so also update in cache
         self.cache_session()
         return res
 
     def post(self, url, data, **kwargs):
+        """ post request """
         res = self.session.post(
             url, data=data, proxies=self.proxies, **kwargs)
         self.cache_session()
