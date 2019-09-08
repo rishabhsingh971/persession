@@ -90,7 +90,7 @@ class Login:
         self.max_session_time = max_session_time
         self.session_cache_path = os.path.join(
             tempfile.gettempdir(), url_data.netloc + '.dat')
-        L.debug('Set session cache file path - %s', self.session_cache_path)
+        L.debug('Set session cache file path - "%s"', self.session_cache_path)
         self.user_agent = user_agent
         self.login_test_string = login_info.test_string
         if debug:
