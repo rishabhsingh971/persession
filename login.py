@@ -114,7 +114,6 @@ class Login:
                               proxies=self.proxies, **kwargs)
 
         self._test_login()
-        self.__is_logged_in = True
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
 
@@ -161,7 +160,7 @@ class Login:
 
     def is_logged_in(self):
         """
-        check if logged in
+        return if logged in (works only if test url and string is given)
 
         Returns:
             bool -- log in status
