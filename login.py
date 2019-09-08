@@ -109,7 +109,7 @@ class Login:
                 .format(self.login_url)
             )
         if self.debug:
-            print('successfully created new session with login')
+            print('session restore successfull' if is_cached else 'login successfull')
         self.cache_session()
 
     def cache_session(self):
