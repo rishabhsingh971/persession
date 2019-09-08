@@ -113,13 +113,7 @@ class Login:
             self.session.post(self.login_url, data=self.login_data,
                               proxies=self.proxies, **kwargs)
 
-        if self.login_test_url and self.login_test_string:
-            L.debug('Test login')
-            res = self.session.get(self.login_test_url)
-            if res.text.lower().find(self.login_test_string.lower()) < 0:
-                raise Exception('Login test failed: url - "{}", string - "{}"'.format(
-                    self.login_test_url, self.login_test_string))
-            L.debug('Login test pass')
+        self._test_login()
         self.__is_logged_in = True
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
@@ -147,6 +141,23 @@ class Login:
         # the session has been updated on the server, so also update in cache
         self.cache_session()
         return res
+
+    def _test_login(self):
+        """
+        test login
+
+        Raises:
+            Exception: Login test failed
+        """
+        if not self.login_test_url or not self.login_test_string:
+            return
+        L.debug('Test login')
+        res = self.session.get(self.login_test_url)
+        if res.text.lower().find(self.login_test_string.lower()) < 0:
+            raise Exception('Login test failed: url - "{}", string - "{}"'.format(
+                self.login_test_url, self.login_test_string))
+        self.__is_logged_in = True
+        L.debug('Login test pass')
 
     def is_logged_in(self):
         """
