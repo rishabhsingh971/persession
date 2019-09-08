@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 
 import requests
 
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
+
 
 class Login:
     """
@@ -26,7 +28,7 @@ class Login:
             before_login=None,
             max_session_time_seconds=3000 * 60,
             proxies=None,
-            user_agent='Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
+            user_agent=DEFAULT_USER_AGENT,
             debug=True,
             force_login=False,
             **kwargs
