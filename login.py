@@ -101,16 +101,13 @@ class Login:
         """
         url_data = urlparse(login_info.url)
 
-        self.login_data = login_info.data
-        self.login_url = login_info.url
-        self.login_test_url = login_info.test_url
+        self.login_info = login_info
         self.proxies = proxies
         self.max_session_time = max_session_time
         self.session_cache_path = os.path.join(
             tempfile.gettempdir(), url_data.netloc + '.dat')
         L.debug('Set session cache file path - "%s"', self.session_cache_path)
         self.user_agent = user_agent
-        self.login_test_string = login_info.test_string
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.before_login = before_login
@@ -146,8 +143,8 @@ class Login:
                 self.session.headers.update({'user-agent': self.user_agent})
             if self.before_login:
                 L.debug('Call before login callback')
-                self.before_login(self.session, self.login_data)
-            self.session.post(self.login_url, data=self.login_data,
+                self.before_login(self.session, self.login_info.data)
+            self.post(self.login_info.url, data=self.login_info.data,
                               proxies=self.proxies, **kwargs)
 
         self._test_login()
@@ -199,13 +196,13 @@ class Login:
         Raises:
             Exception: Login test failed
         """
-        if not self.login_test_url or not self.login_test_string:
+        if not self.login_info.test_url or not self.login_info.test_string:
             return
         L.debug('Test login')
-        res = self.session.get(self.login_test_url)
-        if res.text.lower().find(self.login_test_string.lower()) < 0:
+        res = self.session.get(self.login_info.test_url)
+        if res.text.lower().find(self.login_info.test_string.lower()) < 0:
             raise Exception('Login test failed: url - "{}",string - "{}"'.format(
-                self.login_test_url, self.login_test_string))
+                self.login_info.test_url, self.login_info.test_string))
         self.__is_logged_in = True
         L.debug('Login test pass')
 
