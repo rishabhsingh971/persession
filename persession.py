@@ -60,10 +60,11 @@ class LoginInfo:
 
 
 class Session(requests.Session):
-    """A class which handles and saves login sessions with proxy support. Basic Usage:
+    """Persistent session with login helper and proxy support. Basic Usage:
         >>> login_data = {'user': 'user', 'password': 'pass'}
-        >>> site = Login('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
-        >>> res = site.get('https://e.com/data')
+        >>> login_info = LoginInfo('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
+        >>> session = Session(login_info)
+        >>> res = session.get('https://e.com/data')
     """
 
     def __init__(
