@@ -131,7 +131,7 @@ class Session(requests.Session):
                 self.session.headers.update({'user-agent': self.user_agent})
             if before_login:
                 L.debug('Call before login callback')
-                before_login(self.session, self.login_info.data)
+                before_login(self)
             self.post(self.login_info.url, self.login_info.data, **kwargs)
 
         self._test_login()
