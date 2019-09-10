@@ -110,12 +110,11 @@ class Login:
         self.user_agent = user_agent
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
-        self.before_login = before_login
         self.__is_logged_in = False
         self.session: requests.Session = None
-        self.login(force_login, **kwargs)
+        self.login(before_login, force_login, **kwargs)
 
-    def login(self, force_login: bool = False, **kwargs):
+    def login(self, before_login, force_login: bool = False, **kwargs):
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
         Always updates session cache file.
@@ -141,9 +140,9 @@ class Login:
             self.session = requests.Session()
             if self.user_agent:
                 self.session.headers.update({'user-agent': self.user_agent})
-            if self.before_login:
+            if before_login:
                 L.debug('Call before login callback')
-                self.before_login(self.session, self.login_info.data)
+                before_login(self.session, self.login_info.data)
             self.post(self.login_info.url, data=self.login_info.data, **kwargs)
 
         self._test_login()
