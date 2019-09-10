@@ -190,4 +190,4 @@ class Session(requests.Session):
 
     def update_login_info_data(self, data):
         """update login info data"""
-        self.login_info.data.update(data)
+        self.login_info.update_data(data)
