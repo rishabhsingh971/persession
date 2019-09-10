@@ -187,3 +187,7 @@ class Session(requests.Session):
             bool -- log in status
         """
         return self.__is_logged_in
+
+    def update_login_info_data(self, data):
+        """update login info data"""
+        self.login_info.data.update(data)
