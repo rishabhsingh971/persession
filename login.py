@@ -59,7 +59,7 @@ class LoginInfo:
         self.data.update(data)
 
 
-class Login:
+class Login(requests.Session):
     """A class which handles and saves login sessions with proxy support. Basic Usage:
         >>> login_data = {'user': 'user', 'password': 'pass'}
         >>> site = Login('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
@@ -83,7 +83,7 @@ class Login:
             login_info {LoginInfo} -- login info
 
         Keyword Arguments:
-            before_login {callback} -- function to call before login,
+            before_login {callbac} -- function to call before login,
                 with session and login data as arguments (default: {None})
             max_session_time {int} -- session timeout in seconds (default: {3600})
             proxies {dict} -- proxies in format {'https': 'https://user:pass@server:port',
@@ -99,6 +99,7 @@ class Login:
         Returns:
             Login -- Login class instance
         """
+        super().__init__(self)
         url_data = urlparse(login_info.url)
 
         self.login_info = login_info
@@ -111,7 +112,6 @@ class Login:
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.__is_logged_in = False
-        self.session: requests.Session = None
         self.login(before_login, force_login, **kwargs)
 
     def login(self, before_login, force_login: bool = False, **kwargs):
@@ -131,7 +131,7 @@ class Login:
 
             if last_modified_time < self.max_session_time:
                 with open(self.session_cache_path, "rb") as file:
-                    self.session = pickle.load(file)
+                    self.__dict__.update(pickle.load(file))
                 is_cached = True
             else:
                 L.debug('Cache expired (older than %s)', self.max_session_time)
@@ -154,39 +154,7 @@ class Login:
         # always save (to update timeout)
         L.debug('Update session cache file')
         with open(self.session_cache_path, "wb") as file:
-            pickle.dump(self.session, file)
-
-    def get(self, url: str, **kwargs) -> requests.Response:
-        """Get request
-
-        Arguments:
-            url {str} -- url
-
-        Returns:
-            requests.Response -- request response
-        """
-        L.debug('Get request %s', url)
-        res = self.session.get(url, proxies=self.proxies, **kwargs)
-        # the session has been updated on the server, so also update in cache
-        self.cache_session()
-        return res
-
-    def post(self, url: str, data: dict, **kwargs) -> requests.Response:
-        """Post request
-
-        Arguments:
-            url {str} -- url
-            data {dict} -- data
-
-        Returns:
-            requests.Response -- request response
-        """
-        L.debug('Post request %s', url)
-        res = self.session.post(
-            url, data=data, proxies=self.proxies, **kwargs)
-        # the session has been updated on the server, so also update in cache
-        self.cache_session()
-        return res
+            pickle.dump(self, file)
 
     def _test_login(self):
         """Test login
