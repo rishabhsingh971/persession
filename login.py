@@ -122,19 +122,8 @@ class Login(requests.Session):
         is_cached = False
         L.debug('Ignore cache(force login)' if force_login else 'Check session cache')
         if os.path.exists(self.session_cache_path) and not force_login:
-            time = datetime.fromtimestamp(
-                os.path.getmtime(self.session_cache_path))
-            # only load if last access time of file is less than max session time
-            last_modified_time = (datetime.now() - time).seconds
-            L.debug('Cache file found (last accessed %ss ago)',
-                    last_modified_time)
+            is_cached = self.load_session()
 
-            if last_modified_time < self.max_session_time:
-                with open(self.session_cache_path, "rb") as file:
-                    self.__dict__.update(pickle.load(file))
-                is_cached = True
-            else:
-                L.debug('Cache expired (older than %s)', self.max_session_time)
         if not is_cached:
             L.debug('Generate new login session')
             self.session = requests.Session()
@@ -148,6 +137,25 @@ class Login(requests.Session):
         self._test_login()
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
+
+    def load_session(self):
+        """load session
+
+        Returns:
+            bool -- if session loaded
+        """
+        time = datetime.fromtimestamp(
+            os.path.getmtime(self.session_cache_path))
+        # only load if last access time of file is less than max session time
+        last_modified_time = (datetime.now() - time).seconds
+        L.debug('Cache file found (last accessed %ss ago)', last_modified_time)
+
+        if last_modified_time < self.max_session_time:
+            with open(self.session_cache_path, "rb") as file:
+                self.__dict__.update(pickle.load(file))
+            return True
+        L.debug('Cache expired (older than %s)', self.max_session_time)
+        return False
 
     def cache_session(self):
         """Save session to a cache file."""
