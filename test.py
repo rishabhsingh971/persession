@@ -2,7 +2,7 @@
 import re
 from getpass import getpass
 
-from login import Login, LoginInfo
+from persession import Session, LoginInfo
 
 
 def set_auth_data(session, url, data):
@@ -35,8 +35,8 @@ def main():
         'commit': 'Log in',
     }
     info = LoginInfo(login_url, login_data, practice_url, 'Log Out')
-    Login(info, debug=True,
-          before_login=lambda session, login_data: set_auth_data(session, login_url, login_data))
+    Session(info, debug=True,
+            before_login=lambda session, login_data: set_auth_data(session, login_url, login_data))
 
 
 if __name__ == "__main__":

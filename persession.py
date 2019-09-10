@@ -1,4 +1,4 @@
-""" Login Helper for python scripts which need to login to a site """
+""" Persistent requests session """
 import logging
 import logging.config
 import os
@@ -59,7 +59,7 @@ class LoginInfo:
         self.data.update(data)
 
 
-class Login(requests.Session):
+class Session(requests.Session):
     """A class which handles and saves login sessions with proxy support. Basic Usage:
         >>> login_data = {'user': 'user', 'password': 'pass'}
         >>> site = Login('https://e.com/log_in', login_data, 'https://e.com/user_page', 'log out')
