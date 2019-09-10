@@ -144,8 +144,7 @@ class Login:
             if self.before_login:
                 L.debug('Call before login callback')
                 self.before_login(self.session, self.login_info.data)
-            self.post(self.login_info.url, data=self.login_info.data,
-                              proxies=self.proxies, **kwargs)
+            self.post(self.login_info.url, data=self.login_info.data, **kwargs)
 
         self._test_login()
         L.debug('Cached session restored' if is_cached else 'Login successfull')
