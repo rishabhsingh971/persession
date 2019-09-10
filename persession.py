@@ -99,7 +99,7 @@ class Session(requests.Session):
         Returns:
             Login -- Login class instance
         """
-        super().__init__(self)
+        super().__init__()
         url_data = urlparse(login_info.url)
 
         self.login_info = login_info
