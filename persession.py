@@ -1,4 +1,4 @@
-""" Persistent requests session """
+""" Persistent session with login helper that can help python scripts to login to sites"""
 import logging
 import logging.config
 import os
@@ -51,7 +51,7 @@ class LoginInfo:
         self.test_string = test_string
 
     def update_data(self, data: dict):
-        """update login data
+        """Update login data
 
         Arguments:
             data {dict} -- [description]
@@ -139,7 +139,7 @@ class Session(requests.Session):
         self.cache_session()
 
     def load_session(self):
-        """load session
+        """Load session from cache
 
         Returns:
             bool -- if session loaded
@@ -181,7 +181,7 @@ class Session(requests.Session):
         L.debug('Login test pass')
 
     def is_logged_in(self):
-        """return if logged in (works only if test url and string is given)
+        """Return if logged in (works only if test url and string is given)
 
         Returns:
             bool -- log in status
