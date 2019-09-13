@@ -110,7 +110,6 @@ class Session(requests.Session):
             self,
             url: str,
             data: dict,
-            force_login: bool = False,
             **kwargs
     ):
         """Login to the session. tries to read last saved session from cache file,
@@ -123,13 +122,8 @@ class Session(requests.Session):
         Keyword Arguments:
             force_login {bool} -- bypass session cache and re-login (default: {False})
         """
-        is_loaded = False
-        if force_login:
-            L.debug('Ignore cache(force login)')
-        else:
-            is_loaded = self.load_session()
-
-        if is_loaded:
+        if self.is_logged_in(url):
+            L.debug('Already logged in')
             return
 
         L.debug('Try to Login - %s', url)
