@@ -42,6 +42,14 @@ class CacheType(Enum):
     AFTER_EACH_LOGIN = auto()
 
 
+@unique
+class LoginStatus(Enum):
+    """Login Status"""
+    SUCCESS = 'Login Succesful'
+    FAILURE = 'Login Failed'
+    LOGGED_IN = 'Already logged in'
+
+
 def get_temp_file_path(prefix, suffix):
     """get a temporary file path
     Returns:
@@ -123,15 +131,17 @@ class Session(requests.Session):
             force_login {bool} -- bypass session cache and re-login (default: {False})
         """
         if self.is_logged_in(url):
-            L.debug('Already logged in')
-            return
+            L.debug(LoginStatus.LOGGED_IN)
+            return {'status': LoginStatus.LOGGED_IN, 'response': None}
 
         L.debug('Try to Login - %s', url)
-        self.post(url, data, **kwargs)
+        res = self.post(url, data, **kwargs)
 
         if self.is_logged_in(url):
             if self.cache_type == CacheType.AFTER_EACH_LOGIN:
                 self.cache_session()
+            return {'status': LoginStatus.SUCCESS, 'response': res}
+        return {'status': LoginStatus.FAILURE, 'response': res}
 
     def load_session(self):
         """Load session from cache
