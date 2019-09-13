@@ -94,8 +94,11 @@ class Session(requests.Session):
             Login -- Login class instance
         """
         super().__init__()
-        self.proxies = proxies
         self.cache_timeout = cache_timeout
+        if proxies:
+            self.proxies.update(proxies)
+        if user_agent:
+            self.headers.update({'user-agent': user_agent})
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.__is_logged_in = False
