@@ -5,7 +5,6 @@ import os
 import pickle
 import tempfile
 from datetime import datetime
-from urllib.parse import urlparse
 
 import requests
 
