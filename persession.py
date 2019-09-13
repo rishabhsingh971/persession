@@ -116,11 +116,8 @@ class Session(requests.Session):
                 {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'})
             debug {bool} -- verbose log messages (default: {False})
 
-        Raises:
-            Exception: when login test fails
-
         Returns:
-            Login -- Login class instance
+            Session -- Session class instance
         """
         super().__init__()
         self.cache_timeout = cache_timeout
@@ -143,14 +140,11 @@ class Session(requests.Session):
     ):
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
-        Always updates session cache file.
 
         Arguments:
             login_info {LoginInfo} -- [description]
 
         Keyword Arguments:
-            before_login {callback} -- function to call before login,
-                with session and login data as arguments (default: {None})
             force_login {bool} -- bypass session cache and re-login (default: {False})
         """
         is_loaded = False
