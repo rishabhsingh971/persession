@@ -152,19 +152,19 @@ class Session(requests.Session):
                 with session and login data as arguments (default: {None})
             force_login {bool} -- bypass session cache and re-login (default: {False})
         """
-        is_cached = False
+        is_loaded = False
         if force_login:
             L.debug('Ignore cache(force login)')
         else:
-            is_cached = self.load_session()
+            is_loaded = self.load_session()
 
-        if not is_cached:
+        if not is_loaded:
             L.debug('Generate new login session')
             self.post(login_info.url, login_info.data, **kwargs)
 
         if self.is_logged_in(login_info.url):
-        if self.cache_type == CacheType.AFTER_EACH_LOGIN:
-            self.cache_session()
+            if self.cache_type == CacheType.AFTER_EACH_LOGIN:
+                self.cache_session()
 
     def load_session(self):
         """Load session from cache
