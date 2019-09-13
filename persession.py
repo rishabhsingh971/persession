@@ -168,6 +168,7 @@ class Session(requests.Session):
         Returns:
             bool -- if session loaded
         """
+        L.debug('Load Session')
         if not os.path.exists(self.cache_file_path):
             L.debug('Cache file not found')
             return False
@@ -181,6 +182,7 @@ class Session(requests.Session):
         if last_modified_time < self.cache_timeout:
             with open(self.cache_file_path, "rb") as file:
                 self.__dict__.update(pickle.load(file))
+                L.debug('Cached session restored')
             return True
         L.debug('Cache expired (older than %s)', self.cache_timeout)
         return False
