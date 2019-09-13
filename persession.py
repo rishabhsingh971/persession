@@ -158,9 +158,11 @@ class Session(requests.Session):
         else:
             is_loaded = self.load_session()
 
-        if not is_loaded:
-            L.debug('Generate new login session')
-            self.post(login_info.url, login_info.data, **kwargs)
+        if is_loaded:
+            return
+
+        L.debug('Generate new login session')
+        self.post(login_info.url, login_info.data, **kwargs)
 
         if self.is_logged_in(login_info.url):
             if self.cache_type == CacheType.AFTER_EACH_LOGIN:
