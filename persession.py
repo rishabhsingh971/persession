@@ -162,9 +162,7 @@ class Session(requests.Session):
             L.debug('Generate new login session')
             self.post(login_info.url, login_info.data, **kwargs)
 
-        self.test_login(login_info.test_url, login_info.test_string)
-        L.debug('Cached session restored' if is_cached else 'Login successfull')
-
+        if self.is_logged_in(login_info.url):
         if self.cache_type == CacheType.AFTER_EACH_LOGIN:
             self.cache_session()
 
@@ -204,29 +202,24 @@ class Session(requests.Session):
         with open(self.cache_file_path, "wb") as file:
             pickle.dump(self, file)
 
-    def test_login(self, url, string):
-        """Test login
+    def is_logged_in(self, login_url: str):
+        """Return if logged in
 
-        Raises:
-            Exception: Login test failed
-        """
-        L.debug('Test login')
-        if not url or not string:
-            raise Exception('Invalid test url or string')
-        res = self.get(url)
-        if res.text.lower().find(string.lower()) < 0:
-            raise Exception(
-                'Login test failed: url - "{}",string - "{}"'.format(url, string))
-        self.__is_logged_in = True
-        L.debug('Login test pass')
-
-    def is_logged_in(self):
-        """Return if logged in (works only if test url and string is given)
-
+        Arguments:
+            login_url {str} -- login url
         Returns:
             bool -- log in status
         """
-        return self.__is_logged_in
+        L.debug('Check login')
+        if not login_url:
+            return False
+        res = self.get(login_url, allow_redirects=False)
+        print(res.history, res.status_code)
+        if res.status_code == 302:
+            L.debug('Is logged in')
+            return True
+        L.debug('Is not logged in')
+        return False
 
     def prepare_request(self, request: requests.Request):
         prep = super().prepare_request(request)
