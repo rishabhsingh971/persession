@@ -36,7 +36,7 @@ DEFAULT_CACHE_TIMEOUT = 60 * 60
 @unique
 class CacheType(Enum):
     """ Session Cache types """
-    BEFORE_EXIT = auto()
+    MANUAL = auto()
     AFTER_EACH_REQUEST = auto()
     AFTER_EACH_POST = auto()
     AFTER_EACH_LOGIN = auto()
@@ -96,7 +96,7 @@ class Session(requests.Session):
             self,
             cache_file_path: str,
             cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
-            cache_type: CacheType = CacheType.BEFORE_EXIT,
+            cache_type: CacheType = CacheType.AFTER_EACH_LOGIN,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
             debug: bool = False,
