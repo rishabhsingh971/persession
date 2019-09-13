@@ -80,7 +80,7 @@ class Session(requests.Session):
 
     def __init__(
             self,
-            session_cache_path: str,
+            cache_file_path: str,
             cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
@@ -113,7 +113,7 @@ class Session(requests.Session):
             self.headers.update({'user-agent': user_agent})
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
-        self.session_cache_path = session_cache_path if session_cache_path else get_temp_file_path()
+        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path()
         self.__is_logged_in = False
 
     def login(
@@ -137,7 +137,7 @@ class Session(requests.Session):
         """
         is_cached = False
         L.debug('Ignore cache(force login)' if force_login else 'Check session cache')
-        if os.path.exists(self.session_cache_path) and not force_login:
+        if os.path.exists(self.cache_file_path) and not force_login:
             is_cached = self.load_session()
 
         if not is_cached:
@@ -155,13 +155,13 @@ class Session(requests.Session):
             bool -- if session loaded
         """
         time = datetime.fromtimestamp(
-            os.path.getmtime(self.session_cache_path))
+            os.path.getmtime(self.cache_file_path))
         # only load if last access time of file is less than max session time
         last_modified_time = (datetime.now() - time).seconds
         L.debug('Cache file found (last accessed %ss ago)', last_modified_time)
 
         if last_modified_time < self.cache_timeout:
-            with open(self.session_cache_path, "rb") as file:
+            with open(self.cache_file_path, "rb") as file:
                 self.__dict__.update(pickle.load(file))
             return True
         L.debug('Cache expired (older than %s)', self.cache_timeout)
@@ -171,7 +171,7 @@ class Session(requests.Session):
         """Save session to a cache file."""
         # always save (to update timeout)
         L.debug('Update session cache file')
-        with open(self.session_cache_path, "wb") as file:
+        with open(self.cache_file_path, "wb") as file:
             pickle.dump(self, file)
 
     def test_login(self, url, string):
