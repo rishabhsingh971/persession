@@ -162,7 +162,7 @@ class Session(requests.Session):
         if is_loaded:
             return
 
-        L.debug('Generate new login session')
+        L.debug('Try to Login - %s', login_info.url)
         self.post(login_info.url, login_info.data, **kwargs)
 
         if self.is_logged_in(login_info.url):
@@ -213,7 +213,7 @@ class Session(requests.Session):
         Returns:
             bool -- log in status
         """
-        L.debug('Check login')
+        L.debug('Check login - %s', login_url)
         if not login_url:
             return False
         res = self.get(login_url, allow_redirects=False)
