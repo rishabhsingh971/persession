@@ -50,7 +50,7 @@ class LoginStatus(Enum):
     LOGGED_IN = 'Already logged in'
 
 
-def get_temp_file_path(prefix, suffix):
+def get_temp_file_path(prefix, suffix) -> str:
     """get a temporary file path
     Returns:
         {str} -- file path
@@ -119,7 +119,7 @@ class Session(requests.Session):
             url: str,
             data: dict,
             **kwargs
-    ):
+    ) -> dict:
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
 
@@ -146,7 +146,7 @@ class Session(requests.Session):
             return {'status': LoginStatus.SUCCESS, 'response': res}
         return {'status': LoginStatus.FAILURE, 'response': res}
 
-    def load_session(self):
+    def load_session(self) -> bool:
         """Load session from cache
 
         Returns:
@@ -182,7 +182,7 @@ class Session(requests.Session):
         with open(self.cache_file_path, "wb") as file:
             pickle.dump(self, file)
 
-    def is_logged_in(self, login_url: str):
+    def is_logged_in(self, login_url: str) -> bool:
         """Return if logged in
 
         Arguments:
@@ -200,7 +200,7 @@ class Session(requests.Session):
         L.debug('Is not logged in')
         return False
 
-    def prepare_request(self, request: requests.Request):
+    def prepare_request(self, request: requests.Request) -> requests.PreparedRequest:
         prep = super().prepare_request(request)
         if self.cache_type == CacheType.AFTER_EACH_REQUEST or (
                 self.cache_type == CacheType.AFTER_EACH_POST and
