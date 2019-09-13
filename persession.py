@@ -133,6 +133,7 @@ class Session(requests.Session):
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
             prefix=Session.__name__, suffix='.dat')
+        self.load_session()
 
     def login(
             self,
