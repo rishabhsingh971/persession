@@ -67,10 +67,11 @@ class LoginInfo:
         self.data.update(data)
 
 
-def get_temp_file_path():
+def get_temp_file_path(prefix, suffix):
     temp_file = file_path = None
     try:
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file = tempfile.NamedTemporaryFile(
+            prefix=prefix, suffix=suffix, delete=False)
         file_path = temp_file.name()
     finally:
         if temp_file:
@@ -125,8 +126,8 @@ class Session(requests.Session):
             self.headers.update({'user-agent': user_agent})
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
-        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path()
-        self.__is_logged_in = False
+        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
+            prefix=Session.__name__, suffix='.dat')
 
     def login(
             self,
