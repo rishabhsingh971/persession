@@ -225,9 +225,10 @@ class Session(requests.Session):
         return self.__is_logged_in
 
     def prepare_request(self, request: requests.Request):
-        super().prepare_request(request)
+        prep = super().prepare_request(request)
         if self.cache_type == CacheType.AFTER_EACH_REQUEST or (
                 self.cache_type == CacheType.AFTER_EACH_POST and
                 request.method and request.method.tolower() == 'post'
         ):
             self.cache_session()
+        return prep
