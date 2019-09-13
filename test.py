@@ -48,9 +48,9 @@ def main():
     if not is_logged_in:
         auth_data = get_auth_data(session, login_url)
         login_data.update(auth_data)
-        session.login(login_url, login_data)
 
-    print(is_logged_in)
+    res = session.login(login_url, login_data)
+    print(res['status'])
 
 
 if __name__ == "__main__":
