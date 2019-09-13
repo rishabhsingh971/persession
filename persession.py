@@ -216,7 +216,6 @@ class Session(requests.Session):
         if not login_url:
             return False
         res = self.get(login_url, allow_redirects=False)
-        print(res.history, res.status_code)
         if res.status_code == 302:
             L.debug('Is logged in')
             return True
