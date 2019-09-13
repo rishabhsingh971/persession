@@ -35,6 +35,7 @@ DEFAULT_CACHE_TIMEOUT = 60 * 60
 
 @unique
 class CacheType(Enum):
+    """ Session Cache types """
     BEFORE_EXIT = auto()
     AFTER_EACH_REQUEST = auto()
     AFTER_EACH_POST = auto()
@@ -68,6 +69,10 @@ class LoginInfo:
 
 
 def get_temp_file_path(prefix, suffix):
+    """get a temporary file path
+    Returns:
+        {str} -- file path
+    """
     temp_file = file_path = None
     try:
         temp_file = tempfile.NamedTemporaryFile(
