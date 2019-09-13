@@ -30,7 +30,7 @@ L.addHandler(CONSOLE_HANDLER)
 
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
-DEFAULT_SESSION_TIMEOUT = 60 * 60
+DEFAULT_CACHE_TIMEOUT = 60 * 60
 
 
 class LoginInfo:
@@ -69,7 +69,7 @@ class Session(requests.Session):
 
     def __init__(
             self,
-            max_session_time: int = DEFAULT_SESSION_TIMEOUT,
+            cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
             debug: bool = True,
@@ -81,7 +81,7 @@ class Session(requests.Session):
             login_info {LoginInfo} -- login info
 
         Keyword Arguments:
-            max_session_time {int} -- session timeout in seconds (default: {3600})
+            cache_timeout {int} -- session timeout in seconds (default: {3600})
             proxies {dict} -- proxies in format {'https': 'https://user:pass@server:port',
                 'http' : ...
             user_agent {str} -- user agent (default:
@@ -96,9 +96,7 @@ class Session(requests.Session):
         """
         super().__init__()
         self.proxies = proxies
-        self.max_session_time = max_session_time
-        L.debug('Set session cache file path - "%s"', self.session_cache_path)
-        self.user_agent = user_agent
+        self.cache_timeout = cache_timeout
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.__is_logged_in = False
@@ -147,11 +145,11 @@ class Session(requests.Session):
         last_modified_time = (datetime.now() - time).seconds
         L.debug('Cache file found (last accessed %ss ago)', last_modified_time)
 
-        if last_modified_time < self.max_session_time:
+        if last_modified_time < self.cache_timeout:
             with open(self.session_cache_path, "rb") as file:
                 self.__dict__.update(pickle.load(file))
             return True
-        L.debug('Cache expired (older than %s)', self.max_session_time)
+        L.debug('Cache expired (older than %s)', self.cache_timeout)
         return False
 
     def cache_session(self):
