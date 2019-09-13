@@ -154,8 +154,9 @@ class Session(requests.Session):
 
         """
         is_cached = False
-        L.debug('Ignore cache(force login)' if force_login else 'Check session cache')
-        if not force_login:
+        if force_login:
+            L.debug('Ignore cache(force login)')
+        else:
             is_cached = self.load_session()
 
         if not is_cached:
@@ -174,7 +175,7 @@ class Session(requests.Session):
         Returns:
             bool -- if session loaded
         """
-        L.debug('Load Session')
+        L.debug('Check session cache')
         if not os.path.exists(self.cache_file_path):
             L.debug('Cache file not found')
             return False
