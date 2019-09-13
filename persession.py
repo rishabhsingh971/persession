@@ -187,7 +187,11 @@ class Session(requests.Session):
 
         if last_modified_time < self.cache_timeout:
             with open(self.cache_file_path, "rb") as file:
-                self.__dict__.update(pickle.load(file))
+                session = pickle.load(file)
+                if not isinstance(session, Session):
+                    L.debug('Cache file corrupted')
+                    return False
+                self.__dict__.update(session.__dict__)
                 L.debug('Cached session restored')
             return True
         L.debug('Cache expired (older than %s)', self.cache_timeout)
