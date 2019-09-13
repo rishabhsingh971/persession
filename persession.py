@@ -4,6 +4,7 @@ import logging.config
 import os
 import pickle
 import tempfile
+from enum import Enum, unique, auto
 from datetime import datetime
 
 import requests
@@ -30,6 +31,14 @@ L.addHandler(CONSOLE_HANDLER)
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
 DEFAULT_CACHE_TIMEOUT = 60 * 60
+
+
+@unique
+class CacheType(Enum):
+    BEFORE_EXIT = auto()
+    AFTER_EACH_REQUEST = auto()
+    AFTER_EACH_POST = auto()
+    AFTER_EACH_LOGIN = auto()
 
 
 class LoginInfo:
@@ -81,6 +90,7 @@ class Session(requests.Session):
             self,
             cache_file_path: str,
             cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
+            cache_type: CacheType = CacheType.BEFORE_EXIT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
             debug: bool = True,
@@ -92,6 +102,8 @@ class Session(requests.Session):
 
         Keyword Arguments:
             cache_timeout {int} -- session timeout in seconds (default: {3600})
+            cache_type {CacheType} -- type of caching determines when session is cached
+                (default: {CacheType.ON_EXIT})
             proxies {dict} -- proxies in format {'https': 'https://user:pass@server:port',
                 'http' : ...} (default: {None})
             user_agent {str} -- user agent (default:
@@ -106,6 +118,7 @@ class Session(requests.Session):
         """
         super().__init__()
         self.cache_timeout = cache_timeout
+        self.cache_type = cache_type
         if proxies:
             self.proxies.update(proxies)
         if user_agent:
@@ -145,7 +158,9 @@ class Session(requests.Session):
 
         self.test_login(login_info.test_url, login_info.test_string)
         L.debug('Cached session restored' if is_cached else 'Login successfull')
-        self.cache_session()
+
+        if self.cache_type == CacheType.AFTER_EACH_LOGIN:
+            self.cache_session()
 
     def load_session(self):
         """Load session from cache
@@ -197,3 +212,10 @@ class Session(requests.Session):
         """
         return self.__is_logged_in
 
+    def prepare_request(self, request: requests.Request):
+        super().prepare_request(request)
+        if self.cache_type == CacheType.AFTER_EACH_REQUEST or (
+                self.cache_type == CacheType.AFTER_EACH_POST and
+                request.method and request.method.tolower() == 'post'
+        ):
+            self.cache_session()
