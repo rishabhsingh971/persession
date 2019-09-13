@@ -69,13 +69,10 @@ class Session(requests.Session):
 
     def __init__(
             self,
-            login_info: LoginInfo,
-            before_login=None,
             max_session_time: int = DEFAULT_SESSION_TIMEOUT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
             debug: bool = True,
-            force_login: bool = False,
             **kwargs
     ):
         """Initializer
@@ -84,15 +81,12 @@ class Session(requests.Session):
             login_info {LoginInfo} -- login info
 
         Keyword Arguments:
-            before_login {callbac} -- function to call before login,
-                with session and login data as arguments (default: {None})
             max_session_time {int} -- session timeout in seconds (default: {3600})
             proxies {dict} -- proxies in format {'https': 'https://user:pass@server:port',
                 'http' : ...
             user_agent {str} -- user agent (default:
                 {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'})
             debug {bool} -- verbose log messages (default: {True})
-            force_login {bool} -- bypass session cache and relogin (default: {False})
 
         Raises:
             Exception: when login test fails
@@ -101,24 +95,32 @@ class Session(requests.Session):
             Login -- Login class instance
         """
         super().__init__()
-        url_data = urlparse(login_info.url)
-
-        self.login_info = login_info
         self.proxies = proxies
         self.max_session_time = max_session_time
-        self.session_cache_path = os.path.join(
-            tempfile.gettempdir(), url_data.netloc + '.dat')
         L.debug('Set session cache file path - "%s"', self.session_cache_path)
         self.user_agent = user_agent
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
         self.__is_logged_in = False
-        self.login(before_login, force_login, **kwargs)
 
-    def login(self, before_login, force_login: bool = False, **kwargs):
+    def login(
+            self,
+            login_info: LoginInfo,
+            force_login: bool = False,
+            **kwargs
+    ):
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
         Always updates session cache file.
+
+        Arguments:
+            login_info {LoginInfo} -- [description]
+
+        Keyword Arguments:
+            before_login {callback} -- function to call before login,
+                with session and login data as arguments (default: {None})
+            force_login {bool} -- bypass session cache and relogin (default: {False})
+
         """
         is_cached = False
         L.debug('Ignore cache(force login)' if force_login else 'Check session cache')
@@ -127,15 +129,9 @@ class Session(requests.Session):
 
         if not is_cached:
             L.debug('Generate new login session')
-            self.session = requests.Session()
-            if self.user_agent:
-                self.session.headers.update({'user-agent': self.user_agent})
-            if before_login:
-                L.debug('Call before login callback')
-                before_login(self)
-            self.post(self.login_info.url, self.login_info.data, **kwargs)
+            self.post(login_info.url, login_info.data, **kwargs)
 
-        self._test_login()
+        self.test_login(login_info.test_url, login_info.test_string)
         L.debug('Cached session restored' if is_cached else 'Login successfull')
         self.cache_session()
 
@@ -165,19 +161,19 @@ class Session(requests.Session):
         with open(self.session_cache_path, "wb") as file:
             pickle.dump(self, file)
 
-    def _test_login(self):
+    def test_login(self, url, string):
         """Test login
 
         Raises:
             Exception: Login test failed
         """
-        if not self.login_info.test_url or not self.login_info.test_string:
-            return
         L.debug('Test login')
-        res = self.session.get(self.login_info.test_url)
-        if res.text.lower().find(self.login_info.test_string.lower()) < 0:
-            raise Exception('Login test failed: url - "{}",string - "{}"'.format(
-                self.login_info.test_url, self.login_info.test_string))
+        if not url or not string:
+            raise Exception('Invalid test url or string')
+        res = self.get(url)
+        if res.text.lower().find(string.lower()) < 0:
+            raise Exception(
+                'Login test failed: url - "{}",string - "{}"'.format(url, string))
         self.__is_logged_in = True
         L.debug('Login test pass')
 
@@ -189,6 +185,3 @@ class Session(requests.Session):
         """
         return self.__is_logged_in
 
-    def update_login_info_data(self, data):
-        """update login info data"""
-        self.login_info.update_data(data)
