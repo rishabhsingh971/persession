@@ -5,7 +5,7 @@ from getpass import getpass
 from persession import Session, LoginInfo
 
 
-def set_auth_data(session: Session, url: str):
+def get_auth_data(session: Session, url: str):
     """
     set authentication data
 
@@ -23,11 +23,14 @@ def set_auth_data(session: Session, url: str):
     match = re.search(pattern, res.text)
     if match:
         data['authenticity_token'] = match.group(1)
-    session.update_login_info_data(data)
+    return data
 
 
 def main():
     """ main function. """
+    cache_file_path = 'cache.dat'
+    session = Session(cache_file_path, debug=True)
+
     base_url = 'https://www.interviewbit.com'
     practice_url = base_url + '/practice'
     login_url = base_url + '/users/sign_in/'
@@ -36,9 +39,15 @@ def main():
         'utf8': '&#x2713;',
         'commit': 'Log in',
     }
-    info = LoginInfo(login_url, login_data, practice_url, 'Log Out')
-    Session(info, debug=True,
-            before_login=lambda sess: set_auth_data(sess, login_url))
+
+    is_logged_in = session.is_logged_in(login_url)
+    if not is_logged_in:
+        auth_data = get_auth_data(session, login_url)
+        login_data.update(auth_data)
+        info = LoginInfo(login_url, login_data, practice_url, 'Log Out')
+        session.login(info)
+
+    print(is_logged_in)
 
 
 if __name__ == "__main__":
