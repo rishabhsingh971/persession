@@ -190,7 +190,7 @@ class Session(requests.Session):
     def cache_session(self):
         """Save session to a cache file."""
         # always save (to update timeout)
-        L.debug('Update session cache file')
+        L.debug('Cache Session')
         with open(self.cache_file_path, "wb") as file:
             pickle.dump(self, file)
 
