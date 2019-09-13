@@ -99,7 +99,7 @@ class Session(requests.Session):
             cache_type: CacheType = CacheType.BEFORE_EXIT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
-            debug: bool = True,
+            debug: bool = False,
     ):
         """Initializer
 
@@ -114,7 +114,7 @@ class Session(requests.Session):
                 'http' : ...} (default: {None})
             user_agent {str} -- user agent (default:
                 {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'})
-            debug {bool} -- verbose log messages (default: {True})
+            debug {bool} -- verbose log messages (default: {False})
 
         Raises:
             Exception: when login test fails
