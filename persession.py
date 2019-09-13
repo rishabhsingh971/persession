@@ -59,6 +59,17 @@ class LoginInfo:
         self.data.update(data)
 
 
+def get_temp_file_path():
+    temp_file = file_path = None
+    try:
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        file_path = temp_file.name()
+    finally:
+        if temp_file:
+            temp_file.close()
+    return file_path
+
+
 class Session(requests.Session):
     """Persistent session with login helper and proxy support. Basic Usage:
         >>> data = {'user': 'user', 'password': 'pass'}
@@ -69,6 +80,7 @@ class Session(requests.Session):
 
     def __init__(
             self,
+            session_cache_path: str,
             cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
@@ -101,6 +113,7 @@ class Session(requests.Session):
             self.headers.update({'user-agent': user_agent})
         if debug:
             CONSOLE_HANDLER.setLevel(logging.DEBUG)
+        self.session_cache_path = session_cache_path if session_cache_path else get_temp_file_path()
         self.__is_logged_in = False
 
     def login(
