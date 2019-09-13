@@ -73,7 +73,6 @@ class Session(requests.Session):
             proxies: dict = None,
             user_agent: str = DEFAULT_USER_AGENT,
             debug: bool = True,
-            **kwargs
     ):
         """Initializer
 
