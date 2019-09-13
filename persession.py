@@ -134,8 +134,8 @@ class Session(requests.Session):
             {dict} -- dictionary with login status and request response
         """
         if self.is_logged_in(url):
-            L.debug(LoginStatus.LOGGED_IN)
-            return {'status': LoginStatus.LOGGED_IN, 'response': None}
+            L.debug(LoginStatus.LOGGED_IN.value)
+            return {'status': LoginStatus.LOGGED_IN.value, 'response': None}
 
         L.debug('Try to Login - %s', url)
         res = self.post(url, data, **kwargs)
@@ -143,8 +143,8 @@ class Session(requests.Session):
         if self.is_logged_in(url):
             if self.cache_type == CacheType.AFTER_EACH_LOGIN:
                 self.cache_session()
-            return {'status': LoginStatus.SUCCESS, 'response': res}
-        return {'status': LoginStatus.FAILURE, 'response': res}
+            return {'status': LoginStatus.SUCCESS.value, 'response': res}
+        return {'status': LoginStatus.FAILURE.value, 'response': res}
 
     def load_session(self) -> bool:
         """Load session from cache
