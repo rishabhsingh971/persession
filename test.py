@@ -13,7 +13,7 @@ def get_auth_data(session: Session, url: str):
         session {Sessioni} -- Session instance
         url {str} -- url
     """
-    data = {
+    auth_data = {
         'user[email]': input('user email : '),
         'user[password]': getpass('password   : ')
     }
@@ -22,8 +22,8 @@ def get_auth_data(session: Session, url: str):
     pattern = '<form id.*<input type="hidden" name="authenticity_token" value="(.*?)"'
     match = re.search(pattern, res.text)
     if match:
-        data['authenticity_token'] = match.group(1)
-    return data
+        auth_data['authenticity_token'] = match.group(1)
+    return auth_data
 
 
 def main():
