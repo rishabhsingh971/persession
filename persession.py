@@ -150,8 +150,7 @@ class Session(requests.Session):
         Keyword Arguments:
             before_login {callback} -- function to call before login,
                 with session and login data as arguments (default: {None})
-            force_login {bool} -- bypass session cache and relogin (default: {False})
-
+            force_login {bool} -- bypass session cache and re-login (default: {False})
         """
         is_cached = False
         if force_login:
