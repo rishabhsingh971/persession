@@ -1,4 +1,5 @@
 """ Test file for login module. """
+import os
 import re
 from getpass import getpass
 
@@ -13,9 +14,13 @@ def get_auth_data(session: Session, url: str):
         session {Sessioni} -- Session instance
         url {str} -- url
     """
+    # if you don't want to enter user and password everytime
+    # insert user and password in environment with keys below or replace them manually here
+    user = os.environ.get('PSTEST_USER')
+    password = os.environ.get('PSTEST_PASSWORD')
     auth_data = {
-        'user[email]': input('user email : '),
-        'user[password]': getpass('password   : ')
+        'user[email]': user if user else input('user email : '),
+        'user[password]': password if password else getpass('password   : ')
     }
 
     res = session.get(url)
