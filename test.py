@@ -3,7 +3,7 @@ import os
 import re
 from getpass import getpass
 
-from persession import Session, LoginInfo
+from persession import Session
 
 
 def get_auth_data(session: Session, url: str):
@@ -37,7 +37,6 @@ def main():
     session = Session(cache_file_path, debug=True)
 
     base_url = 'https://www.interviewbit.com'
-    practice_url = base_url + '/practice'
     login_url = base_url + '/users/sign_in/'
     login_data = {
         'user[remember_me]': '1',
@@ -49,8 +48,7 @@ def main():
     if not is_logged_in:
         auth_data = get_auth_data(session, login_url)
         login_data.update(auth_data)
-        info = LoginInfo(login_url, login_data, practice_url, 'Log Out')
-        session.login(info)
+        session.login(login_url, login_data)
 
     print(is_logged_in)
 

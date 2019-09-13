@@ -42,32 +42,6 @@ class CacheType(Enum):
     AFTER_EACH_LOGIN = auto()
 
 
-class LoginInfo:
-    """ Login Info """
-
-    def __init__(self, url: str, data: dict, test_url: str, test_string: str):
-        """Initializer
-
-        Arguments:
-            url {str} -- login url
-            data {dict} -- login data or payload
-            test_url {str} -- login test url
-            test_string {str} -- string that would be checked in get response of give test url
-        """
-        self.url = url
-        self.data = data
-        self.test_url = test_url
-        self.test_string = test_string
-
-    def update_data(self, data: dict):
-        """Update login data
-
-        Arguments:
-            data {dict} -- [description]
-        """
-        self.data.update(data)
-
-
 def get_temp_file_path(prefix, suffix):
     """get a temporary file path
     Returns:
@@ -134,7 +108,8 @@ class Session(requests.Session):
 
     def login(
             self,
-            login_info: LoginInfo,
+            url: str,
+            data: dict,
             force_login: bool = False,
             **kwargs
     ):
@@ -142,7 +117,8 @@ class Session(requests.Session):
         If this fails or last cache access was too old do proper login.
 
         Arguments:
-            login_info {LoginInfo} -- [description]
+            url {str} -- login url
+            data {dict} -- login data payload
 
         Keyword Arguments:
             force_login {bool} -- bypass session cache and re-login (default: {False})
@@ -156,10 +132,10 @@ class Session(requests.Session):
         if is_loaded:
             return
 
-        L.debug('Try to Login - %s', login_info.url)
-        self.post(login_info.url, login_info.data, **kwargs)
+        L.debug('Try to Login - %s', url)
+        self.post(url, data, **kwargs)
 
-        if self.is_logged_in(login_info.url):
+        if self.is_logged_in(url):
             if self.cache_type == CacheType.AFTER_EACH_LOGIN:
                 self.cache_session()
 
