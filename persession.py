@@ -35,7 +35,7 @@ DEFAULT_CACHE_TIMEOUT = 60 * 60
 
 @unique
 class CacheType(Enum):
-    """ Session Cache types """
+    """Session Cache types"""
     MANUAL = auto()
     AFTER_EACH_REQUEST = auto()
     AFTER_EACH_POST = auto()
@@ -129,6 +129,9 @@ class Session(requests.Session):
 
         Keyword Arguments:
             force_login {bool} -- bypass session cache and re-login (default: {False})
+
+        Returns:
+            {dict} -- dictionary with login status and request response
         """
         if self.is_logged_in(url):
             L.debug(LoginStatus.LOGGED_IN)
