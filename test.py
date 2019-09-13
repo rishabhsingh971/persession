@@ -27,7 +27,7 @@ def get_auth_data(session: Session, url: str):
 
 
 def main():
-    """ main function. """
+    """main function"""
     cache_file_path = 'cache.dat'
     session = Session(cache_file_path, debug=True)
 
