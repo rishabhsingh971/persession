@@ -185,8 +185,14 @@ class Session(requests.Session):
 
         if last_modified_time < self.cache_timeout:
             with open(self.cache_file_path, "rb") as file:
-                session = pickle.load(file)
-                if not isinstance(session, Session):
+                error = False
+                session = None
+                try:
+                    session = pickle.load(file)
+                except pickle.UnpicklingError:
+                    error = True
+
+                if error or not isinstance(session, Session):
                     self.i('Cache file corrupted')
                     return False
                 self.__dict__.update(session.__dict__)
