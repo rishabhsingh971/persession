@@ -229,3 +229,11 @@ class Session(requests.Session):
         ):
             self.cache_session()
         return prep
+
+    def get_cache_file_path(self) -> str:
+        """get cache file's path
+
+        Returns:
+            str -- cache file's path
+        """
+        return self.cache_file_path
