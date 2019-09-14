@@ -24,6 +24,7 @@ setup(
         'Development Status :: 3 - Alpha',
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
+        'Intended Audience :: Developers',
     ],
     python_requires='>=3',
     packages=find_packages(),
