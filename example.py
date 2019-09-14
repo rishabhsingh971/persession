@@ -53,7 +53,7 @@ def main():
         auth_data = get_auth_data(session, login_url)
         login_data.update(auth_data)
         res = session.login(login_url, login_data)
-        print(res.login_status)
+        print(res.login_status.value)
     res = session.get(practice_url)
     print(res)
 

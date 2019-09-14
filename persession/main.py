@@ -61,7 +61,7 @@ class LoginResponse(requests.Response):
             login_status {LoginStatus} -- login status
         """
         super().__init__()
-        self.login_status = login_status.value
+        self.login_status = login_status
         if response:
             self.__dict__.update(response.__dict__)
 
