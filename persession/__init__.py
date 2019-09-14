@@ -1,2 +1,3 @@
 """ init """
-name = "persession"
+from .main import *
+name = "persesion"
