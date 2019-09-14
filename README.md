@@ -26,4 +26,4 @@ if is_logged_in:
     data_url = base_url + '/data'
     res = session.get(data_url)
 ```
-You can also check out [test.py](./test.py) for another example.
+You can also check out [example.py](./example.py) for a detailed example.
