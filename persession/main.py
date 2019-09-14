@@ -97,7 +97,7 @@ class Session(requests.Session):
 
     def __init__(
             self,
-            cache_file_path: str,
+            cache_file_path: str = None,
             cache_timeout: int = DEFAULT_CACHE_TIMEOUT,
             cache_type: CacheType = CacheType.AFTER_EACH_LOGIN,
             proxies: dict = None,
