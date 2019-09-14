@@ -27,7 +27,7 @@ setup(
         'Intended Audience :: Developers',
     ],
     python_requires='>=3',
-    packages=find_packages(),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
     install_requires=find_packages(),
     keywords='requests session persistent login utility development',
