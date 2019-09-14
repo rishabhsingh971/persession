@@ -50,6 +50,21 @@ class LoginStatus(Enum):
     LOGGED_IN = 'Already logged in'
 
 
+class LoginResponse(requests.Response):
+    """requests response wrapper with login status"""
+
+    def __init__(self, login_status: LoginStatus, response: requests.Response = None):
+        """initializer
+
+        Arguments:
+            login_status {LoginStatus} -- login status
+        """
+        super().__init__()
+        self.login_status = login_status.value
+        if response:
+            self.__dict__.update(response.__dict__)
+
+
 def get_temp_file_path(prefix, suffix) -> str:
     """get a temporary file path
     Returns:
@@ -119,7 +134,7 @@ class Session(requests.Session):
             url: str,
             data: dict,
             **kwargs
-    ) -> dict:
+    ) -> LoginResponse:
         """Login to the session. tries to read last saved session from cache file,
         If this fails or last cache access was too old do proper login.
 
@@ -131,11 +146,11 @@ class Session(requests.Session):
             force_login {bool} -- bypass session cache and re-login (default: {False})
 
         Returns:
-            {dict} -- dictionary with login status and request response
+            {LoginResponse} -- requests response with login status
         """
         if self.is_logged_in(url):
             L.debug(LoginStatus.LOGGED_IN.value)
-            return {'status': LoginStatus.LOGGED_IN.value, 'response': None}
+            return LoginResponse(LoginStatus.LOGGED_IN)
 
         L.debug('Try to Login - %s', url)
         res = self.post(url, data, **kwargs)
@@ -143,8 +158,8 @@ class Session(requests.Session):
         if self.is_logged_in(url):
             if self.cache_type == CacheType.AFTER_EACH_LOGIN:
                 self.cache_session()
-            return {'status': LoginStatus.SUCCESS.value, 'response': res}
-        return {'status': LoginStatus.FAILURE.value, 'response': res}
+            return LoginResponse(LoginStatus.SUCCESS, res)
+        return LoginResponse(LoginStatus.FAILURE, res)
 
     def load_session(self) -> bool:
         """Load session from cache
