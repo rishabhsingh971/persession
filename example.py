@@ -7,12 +7,14 @@ from persession import CacheType, Session
 
 
 def get_auth_data(session: Session, url: str):
-    """
-    set authentication data
+    """get authentication data
 
     Arguments:
         session {Sessioni} -- Session instance
         url {str} -- url
+
+    Returns:
+        dict -- auth data
     """
     # if you don't want to enter user and password everytime
     # insert user and password in environment with keys below or replace them manually here
