@@ -2,7 +2,7 @@
 import os
 import re
 from getpass import getpass
-from persession.main import Session
+from .main import Session
 
 
 def get_auth_data(session: Session, url: str):
