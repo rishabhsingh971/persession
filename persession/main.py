@@ -110,6 +110,7 @@ class Session(requests.Session):
             login_info {LoginInfo} -- login info
 
         Keyword Arguments:
+            cache_file_path {int} -- session cache file's path (default: {None})
             cache_timeout {int} -- session timeout in seconds (default: {3600})
             cache_type {CacheType} -- type of caching determines when session is cached
                 (default: {CacheType.ON_EXIT})
