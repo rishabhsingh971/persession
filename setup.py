@@ -29,4 +29,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=find_packages(),
+    keywords='requests session persistent login utility development',
 )
