@@ -130,7 +130,7 @@ class Session(requests.Session):
         console_handler.setLevel(logging.DEBUG if debug else logging.ERROR)
         # create formatter and add it to the handlers
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+            '%(asctime)s - %(name)s - %(levelname)-5s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
         # add the handlers to the logger
