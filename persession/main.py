@@ -220,14 +220,14 @@ class Session(requests.Session):
         self.i('Is not logged in')
         return False
 
-    def prepare_request(self, request: requests.Request) -> requests.PreparedRequest:
-        prep = super().prepare_request(request)
+    def send(self, request: requests.PreparedRequest, **kwargs) -> requests.Response:
+        res = super().send(request, **kwargs)
         if self.cache_type == CacheType.AFTER_EACH_REQUEST or (
                 self.cache_type == CacheType.AFTER_EACH_POST and
                 request.method and request.method.lower() == 'post'
         ):
             self.cache_session()
-        return prep
+        return res
 
     def get_cache_file_path(self) -> str:
         """get cache file's path
