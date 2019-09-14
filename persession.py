@@ -1,4 +1,5 @@
-"""Persistent session with login helper that can help python scripts to login to sites"""
+"""A Wrapper on requests.Session with persistence across script runs(caching in a file)
+and login helper that can help python scripts to login to sites"""
 import logging
 import logging.config
 import os
@@ -82,10 +83,15 @@ def get_temp_file_path(prefix, suffix) -> str:
 
 
 class Session(requests.Session):
-    """Persistent session with login helper and proxy support. Basic Usage:
-        >>> data = {'user': 'user', 'password': 'pass'}
-        >>> login_info = LoginInfo('https://e.com/log_in', data, 'https://e.com/home', 'log out')
-        >>> session = Session(login_info)
+    """Persistent session with login helper.
+    Basic Usage:
+        >>> cache_file_path = 'cache.dat'
+        >>> session = Session(cache_file_path)
+        >>> is_logged_in = session.is_logged_in()
+        >>> if not is_logged_in:
+        >>>     data = {'user': 'user', 'password': 'pass'}
+        >>>     res = session.login('https://e.com/login', data)
+        >>>     print(res.login_status)
         >>> res = session.get('https://e.com/data')
     """
 
