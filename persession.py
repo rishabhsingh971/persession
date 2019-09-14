@@ -1,4 +1,4 @@
-""" Persistent session with login helper that can help python scripts to login to sites"""
+"""Persistent session with login helper that can help python scripts to login to sites"""
 import logging
 import logging.config
 import os
