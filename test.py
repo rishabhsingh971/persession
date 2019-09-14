@@ -2,7 +2,7 @@
 import os
 import re
 from getpass import getpass
-from persession import Session
+from persession import Session, CacheType
 
 
 def get_auth_data(session: Session, url: str):
@@ -33,7 +33,8 @@ def get_auth_data(session: Session, url: str):
 def main():
     """main function"""
     cache_file_path = 'cache.dat'
-    session = Session(cache_file_path, debug=True)
+    session = Session(cache_file_path, cache_timeout=24*60*60,
+                      cache_type=CacheType.AFTER_EACH_POST, debug=True)
 
     base_url = 'https://www.interviewbit.com'
     practice_url = base_url + '/practice'
