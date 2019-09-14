@@ -1,6 +1,6 @@
 """setup.py"""
 import pathlib
-from setuptools import setup, find_packages
+from setuptools import setup
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -27,9 +27,8 @@ setup(
         'Intended Audience :: Developers',
     ],
     python_requires='>=3',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
-    install_requires=find_packages(),
+    install_requires=['requests'],
     keywords='requests session persistent login utility development',
     project_urls={
         'Documentation': 'https://github.com/rishabhsingh971/persession/README.md',
