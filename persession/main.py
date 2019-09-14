@@ -5,8 +5,8 @@ import logging.config
 import os
 import pickle
 import tempfile
-from enum import Enum, unique, auto
 from datetime import datetime
+from enum import Enum, auto, unique
 
 import requests
 

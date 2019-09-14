@@ -2,7 +2,8 @@
 import os
 import re
 from getpass import getpass
-from persession import Session, CacheType
+
+from persession import CacheType, Session
 
 
 def get_auth_data(session: Session, url: str):
