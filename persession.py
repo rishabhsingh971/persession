@@ -45,7 +45,7 @@ class CacheType(Enum):
 @unique
 class LoginStatus(Enum):
     """Login Status"""
-    SUCCESS = 'Login Succesful'
+    SUCCESS = 'Login Successful'
     FAILURE = 'Login Failed'
     LOGGED_IN = 'Already logged in'
 
