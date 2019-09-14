@@ -1,6 +1,6 @@
 # PERSESSION (PERsistent SESSION)
 A wrapper on requests.Session with following additional functionalities:
-- Persistance: session can be cached in a file.
+- Persistence: session can be cached in a file.
 - Login functionalities: login and is_logged_in functions are available to help logging into sites
 
 

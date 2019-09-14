@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 setup(
     name="persession",
     version="0.1.1",
-    description="A wrapper on requests session with persistance and login functionalities",
+    description="A wrapper on requests session with persistence and login functionalities",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/rishabhsingh971/persession",
