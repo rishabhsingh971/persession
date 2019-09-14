@@ -226,7 +226,7 @@ class Session(requests.Session):
         prep = super().prepare_request(request)
         if self.cache_type == CacheType.AFTER_EACH_REQUEST or (
                 self.cache_type == CacheType.AFTER_EACH_POST and
-                request.method and request.method.tolower() == 'post'
+                request.method and request.method.lower() == 'post'
         ):
             self.cache_session()
         return prep
