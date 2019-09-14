@@ -30,4 +30,9 @@ setup(
     include_package_data=True,
     install_requires=find_packages(),
     keywords='requests session persistent login utility development',
+    project_urls={
+        'Documentation': 'https://github.com/rishabhsingh971/persession/README.md',
+        'Source': 'https://github.com/rishabhsingh971/persession/',
+        'Tracker': 'https://github.com/rishabhsingh971/persession/issues',
+    },
 )
