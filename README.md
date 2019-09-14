@@ -16,8 +16,8 @@ is_logged_in = session.is_logged_in()
 if not is_logged_in:
     login_url = base_url + '/login'
     data = {'user': 'user', 'password': 'pass'}
-    res = session.login(login_url)
-    if res.login_status = LoginStatus.SUCCESS:
+    res = session.login(login_url, data)
+    if res.login_status != LoginStatus.FAILURE:
         is_logged_in = True
         print('Login success')
     else:
