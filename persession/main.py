@@ -10,25 +10,6 @@ from enum import Enum, auto, unique
 
 import requests
 
-# create logger with module name
-L = logging.getLogger(__package__)
-L.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-FILE_HANDLER = logging.handlers.RotatingFileHandler(
-    os.path.join(tempfile.gettempdir(), 'persession.log'), maxBytes=512000, backupCount=5)
-FILE_HANDLER.setLevel(logging.DEBUG)
-# create console handler with a higher log level
-CONSOLE_HANDLER = logging.StreamHandler()
-CONSOLE_HANDLER.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-FORMATTER = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
-FILE_HANDLER.setFormatter(FORMATTER)
-CONSOLE_HANDLER.setFormatter(FORMATTER)
-# add the handlers to the logger
-L.addHandler(FILE_HANDLER)
-L.addHandler(CONSOLE_HANDLER)
-
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
 DEFAULT_CACHE_TIMEOUT = 60 * 60
@@ -130,11 +111,33 @@ class Session(requests.Session):
             self.proxies.update(proxies)
         if user_agent:
             self.headers.update({'user-agent': user_agent})
-        if debug:
-            CONSOLE_HANDLER.setLevel(logging.DEBUG)
+        self.init_logger(debug)
         self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
             prefix=Session.__name__, suffix='.dat')
         self.load_session()
+
+    def init_logger(self, debug):
+        """ initialize logger """
+        # create logger with module name
+        self.logger = logging.getLogger(__package__)
+        self.logger.setLevel(logging.DEBUG)
+        # create file handler which logs even debug messages
+        file_handler = logging.handlers.RotatingFileHandler(
+            os.path.join(tempfile.gettempdir(), __package__+'.log'), maxBytes=512000, backupCount=5)
+        file_handler.setLevel(logging.DEBUG)
+        # create console handler with a higher log level
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG if debug else logging.ERROR)
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        # add the handlers to the logger
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(console_handler)
+        self.d = self.logger.debug
+        self.i = self.logger.info
 
     def login(
             self,
@@ -156,10 +159,10 @@ class Session(requests.Session):
             {LoginResponse} -- requests response with login status
         """
         if self.is_logged_in(url):
-            L.debug(LoginStatus.LOGGED_IN.value)
+            self.i(LoginStatus.LOGGED_IN.value)
             return LoginResponse(LoginStatus.LOGGED_IN)
 
-        L.debug('Try to Login - %s', url)
+        self.i('Try to Login - %s', url)
         res = self.post(url, data, **kwargs)
 
         if self.is_logged_in(url):
@@ -174,33 +177,33 @@ class Session(requests.Session):
         Returns:
             bool -- if session loaded
         """
-        L.debug('Check session cache')
+        self.i('Check session cache')
         if not os.path.exists(self.cache_file_path):
-            L.debug('Cache file not found')
+            self.i('Cache file not found')
             return False
 
         time = datetime.fromtimestamp(
             os.path.getmtime(self.cache_file_path))
         # only load if last access time of file is less than max session time
         last_modified_time = (datetime.now() - time).seconds
-        L.debug('Cache file found (last accessed %ss ago)', last_modified_time)
+        self.i('Cache file found (last accessed %ss ago)', last_modified_time)
 
         if last_modified_time < self.cache_timeout:
             with open(self.cache_file_path, "rb") as file:
                 session = pickle.load(file)
                 if not isinstance(session, Session):
-                    L.debug('Cache file corrupted')
+                    self.i('Cache file corrupted')
                     return False
                 self.__dict__.update(session.__dict__)
-                L.debug('Cached session restored')
+                self.i('Cached session restored')
             return True
-        L.debug('Cache expired (older than %s)', self.cache_timeout)
+        self.i('Cache expired (older than %s)', self.cache_timeout)
         return False
 
     def cache_session(self):
         """Save session to a cache file."""
         # always save (to update timeout)
-        L.debug('Cache Session')
+        self.i('Cache Session')
         with open(self.cache_file_path, "wb") as file:
             pickle.dump(self, file)
 
@@ -212,14 +215,14 @@ class Session(requests.Session):
         Returns:
             bool -- log in status
         """
-        L.debug('Check login - %s', login_url)
+        self.d('Check login - %s', login_url)
         if not login_url:
             return False
         res = self.get(login_url, allow_redirects=False)
         if res.status_code == 302:
-            L.debug('Is logged in')
+            self.i('Is logged in')
             return True
-        L.debug('Is not logged in')
+        self.i('Is not logged in')
         return False
 
     def prepare_request(self, request: requests.Request) -> requests.PreparedRequest:
