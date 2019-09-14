@@ -11,7 +11,7 @@ from enum import Enum, auto, unique
 import requests
 
 # create logger with module name
-L = logging.getLogger(__name__)
+L = logging.getLogger(__package__)
 L.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
 FILE_HANDLER = logging.handlers.RotatingFileHandler(
