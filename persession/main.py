@@ -29,7 +29,6 @@ class LoginStatus(Enum):
     """Login Status"""
     SUCCESS = 'Login Successful'
     FAILURE = 'Login Failed'
-    LOGGED_IN = 'Already logged in'
 
 
 class LoginResponse(requests.Response):
@@ -158,10 +157,6 @@ class Session(requests.Session):
         Returns:
             {LoginResponse} -- requests response with login status
         """
-        if self.is_logged_in(url):
-            self.i(LoginStatus.LOGGED_IN.value)
-            return LoginResponse(LoginStatus.LOGGED_IN)
-
         self.i('Try to Login - %s', url)
         res = self.post(url, data, **kwargs)
 
