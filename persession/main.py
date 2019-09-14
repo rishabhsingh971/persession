@@ -117,7 +117,7 @@ class Session(requests.Session):
 
     def init_logger(self, debug):
         """ initialize logger """
-        # create logger with module name
+        # create logger with package name
         self.logger = logging.getLogger(__package__)
         self.logger.setLevel(logging.DEBUG)
         # create file handler which logs even debug messages
