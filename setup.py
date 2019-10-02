@@ -1,6 +1,6 @@
 """setup.py"""
 import pathlib
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -27,6 +27,7 @@ setup(
         'Intended Audience :: Developers',
     ],
     python_requires='>=3',
+    packages=find_packages(),
     include_package_data=True,
     install_requires=['requests'],
     keywords='requests session persistent login utility development',
