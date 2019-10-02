@@ -152,7 +152,7 @@ class Session(requests.Session):
         self.d = self.logger.debug
         self.i = self.logger.info
         if debug:
-            self.d('debug logs can also be found at "%s"', )
+            self.d('debug logs can also be found at "%s"', log_file_path)
 
     def login(
             self,
