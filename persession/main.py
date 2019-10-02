@@ -117,16 +117,16 @@ class Session(requests.Session):
             Session -- Session class instance
         """
         super().__init__()
-        self.load_session()
+        self.init_logger(debug)
+        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
+            prefix=Session.__name__, suffix='.dat')
         self.cache_timeout = cache_timeout
         self.cache_type = cache_type
+        self.load_session()
         if proxies:
             self.proxies.update(proxies)
         if user_agent:
             self.headers.update({'user-agent': user_agent})
-        self.init_logger(debug)
-        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
-            prefix=Session.__name__, suffix='.dat')
 
     def init_logger(self, debug):
         """ initialize logger """
