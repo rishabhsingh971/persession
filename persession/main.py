@@ -183,6 +183,7 @@ class Session(requests.Session):
         return LoginResponse(LoginStatus.FAILURE, res)
 
     def __enter__(self):
+        self._is_context = True
         return self
 
     def __exit__(self, *args):
@@ -193,6 +194,9 @@ class Session(requests.Session):
         Not guaranteed to work:
             https://docs.python.org/3/reference/datamodel.html?highlight=destructor#object.__del__
         """
+        # don't save in `__del__` if already saved in `__exit__`
+        if getattr(self, '_is_context', None):
+            return
         self.save_on_exit()
 
     def save_on_exit(self):
