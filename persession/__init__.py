@@ -1,3 +1,3 @@
 """ init """
 from .main import *
-name = "persesion"
+name = "persession"
