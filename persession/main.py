@@ -104,6 +104,7 @@ class Session(requests.Session):
             Session -- Session class instance
         """
         super().__init__()
+        self.load_session()
         self.cache_timeout = cache_timeout
         self.cache_type = cache_type
         if proxies:
@@ -113,7 +114,6 @@ class Session(requests.Session):
         self.init_logger(debug)
         self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
             prefix=Session.__name__, suffix='.dat')
-        self.load_session()
 
     def init_logger(self, debug):
         """ initialize logger """
