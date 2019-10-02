@@ -121,8 +121,9 @@ class Session(requests.Session):
         self.logger = logging.getLogger(__package__)
         self.logger.setLevel(logging.DEBUG)
         # create file handler which logs even debug messages
+        log_file_path = os.path.join(tempfile.gettempdir(), __package__+'.log')
         file_handler = logging.handlers.RotatingFileHandler(
-            os.path.join(tempfile.gettempdir(), __package__+'.log'), maxBytes=512000, backupCount=5)
+            log_file_path, maxBytes=512000, backupCount=5)
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level
         console_handler = logging.StreamHandler()
@@ -137,6 +138,8 @@ class Session(requests.Session):
         self.logger.addHandler(console_handler)
         self.d = self.logger.debug
         self.i = self.logger.info
+        if debug:
+            self.d('debug logs can also be found at "%s"', )
 
     def login(
             self,
