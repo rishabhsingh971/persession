@@ -118,7 +118,7 @@ class Session(requests.Session):
         """
         super().__init__()
         self.init_logger(debug)
-        self.cache_file_path = cache_file_path if cache_file_path else get_temp_file_path(
+        self.cache_file_path = cache_file_path or get_temp_file_path(
             prefix=Session.__name__, suffix='.dat')
         self.cache_timeout = cache_timeout
         self.cache_type = cache_type
