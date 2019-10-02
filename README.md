@@ -1,6 +1,6 @@
 # PERSESSION (PERsistent SESSION)
 A wrapper on [requests.Session](https://2.python-requests.org/en/master/api/#requests.Session) with following additional functionalities:
-- Persistence: session can be cached in a file.
+- Persistence: session can be cached in a file for persistence between script runs.
 - Login functionalities: login and is_logged_in functions are available to help logging into sites
 
 
