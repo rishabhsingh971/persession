@@ -36,26 +36,27 @@ def get_auth_data(session: Session, url: str):
 def main():
     """main function"""
     cache_file_path = 'cache.dat'
-    session = Session(cache_file_path, cache_timeout=24*60*60,
-                      cache_type=CacheType.AFTER_EACH_POST, debug=True)
+    # session = Session(cache_file_path, cache_timeout=24*60*60,
+    #                   cache_type=CacheType.AFTER_EACH_POST, debug=True)
+    with Session(cache_file_path, cache_timeout=24*60*60,
+                 cache_type=CacheType.AT_EXIT, debug=True) as session:
+        base_url = 'https://www.interviewbit.com'
+        practice_url = base_url + '/practice'
+        login_url = base_url + '/users/sign_in/'
+        login_data = {
+            'user[remember_me]': '1',
+            'utf8': '&#x2713;',
+            'commit': 'Log in',
+        }
 
-    base_url = 'https://www.interviewbit.com'
-    practice_url = base_url + '/practice'
-    login_url = base_url + '/users/sign_in/'
-    login_data = {
-        'user[remember_me]': '1',
-        'utf8': '&#x2713;',
-        'commit': 'Log in',
-    }
-
-    is_logged_in = session.is_logged_in(login_url)
-    if not is_logged_in:
-        auth_data = get_auth_data(session, login_url)
-        login_data.update(auth_data)
-        res = session.login(login_url, login_data)
-        print(res.login_status.value)
-    res = session.get(practice_url)
-    print(res)
+        is_logged_in = session.is_logged_in(login_url)
+        if not is_logged_in:
+            auth_data = get_auth_data(session, login_url)
+            login_data.update(auth_data)
+            res = session.login(login_url, login_data)
+            print(res.login_status.value)
+        res = session.get(practice_url)
+        print(res)
 
 
 if __name__ == "__main__":
