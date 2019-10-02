@@ -22,6 +22,8 @@ class CacheType(Enum):
     AFTER_EACH_REQUEST = auto()
     AFTER_EACH_POST = auto()
     AFTER_EACH_LOGIN = auto()
+    # uses __del__ or __exit(only when used as context)
+    AT_EXIT = auto()
 
 
 @unique
@@ -168,6 +170,28 @@ class Session(requests.Session):
                 self.cache_session()
             return LoginResponse(LoginStatus.SUCCESS, res)
         return LoginResponse(LoginStatus.FAILURE, res)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.save_on_exit()
+
+    def __del__(self):
+        """
+        Not guaranteed to work:
+            https://docs.python.org/3/reference/datamodel.html?highlight=destructor#object.__del__
+        """
+        self.save_on_exit()
+
+    def save_on_exit(self):
+        """save on exit"""
+        if not hasattr(self, 'cache_type') or not hasattr(self, 'cache_session'):
+            return
+        if self.cache_type != CacheType.AT_EXIT:
+            return
+        self.cache_session()
+        self.close()
 
     def load_session(self) -> bool:
         """Load session from cache
