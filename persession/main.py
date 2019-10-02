@@ -18,11 +18,22 @@ DEFAULT_CACHE_TIMEOUT = 60 * 60
 @unique
 class CacheType(Enum):
     """Session Cache types"""
+    # manually call `cache_session` function
     MANUAL = auto()
+    # save session after each request
     AFTER_EACH_REQUEST = auto()
+    # save session after each post request
     AFTER_EACH_POST = auto()
+    # save session after each successful login
     AFTER_EACH_LOGIN = auto()
-    # uses __del__ or __exit(only when used as context)
+    '''
+    save session either
+        1. when used as context manager (Recommended)
+        2. when the instance is about to be destroyed
+        NOTE: It is not guaranteed that __del__() methods are called for objects that still
+            exist when the interpreter exits.
+            https://docs.python.org/3/reference/datamodel.html?highlight=destructor#object.__del__
+    '''
     AT_EXIT = auto()
 
 
